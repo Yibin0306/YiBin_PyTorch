@@ -44,7 +44,7 @@ class MyData(Dataset):
         return len(self.img_path)  # 当前类别的图像数量
 
 # 数据集路径配置
-root_dir = "D:\\Resources\\hymenoptera_data\\hymenoptera_data\\train"  # 训练集根目录
+root_dir = "D:\\Resources\\PyTorch_Learn\\hymenoptera_data\\hymenoptera_data\\train"  # 训练集根目录
 ants_label_dir = "ants_image"  # 蚂蚁类别子目录名
 bees_label_dir = "bees_image"  # 蜜蜂类别子目录名
 
