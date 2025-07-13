@@ -7,7 +7,7 @@ from PIL import Image  # 图像处理库
 # 所有记录的数据将保存在该目录中，可通过TensorBoard可视化
 writer = SummaryWriter("TensorBoard")
 
-# 定义图像文件路径（注意：Windows路径使用双反斜杠）
+# 定义图像文件路径
 img_path = "D:\\Resources\\PyTorch_Learn\\hymenoptera_data\\hymenoptera_data\\train\\ants_image\\0013035.jpg"
 
 # 使用PIL库打开图像文件
