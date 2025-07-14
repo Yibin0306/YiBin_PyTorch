@@ -11,7 +11,7 @@ dataset_transform = torchvision.transforms.Compose([
 
 # 创建CIFAR10训练数据集
 train_set = torchvision.datasets.CIFAR10(
-    root='./dataset',  # 数据集存储路径
+    root='./CIFAR10_DATA',  # 数据集存储路径
     train=True,  # 加载训练集
     transform=dataset_transform,  # 应用定义的预处理变换
     download=True  # 如果本地不存在则下载数据集
@@ -19,7 +19,7 @@ train_set = torchvision.datasets.CIFAR10(
 
 # 创建CIFAR10测试数据集
 test_set = torchvision.datasets.CIFAR10(
-    root='./dataset',  # 数据集存储路径
+    root='./CIFAR10_DATA',  # 数据集存储路径
     train=False,  # 加载测试集
     transform=dataset_transform,  # 应用相同的预处理变换
     download=True  # 如果本地不存在则下载数据集
