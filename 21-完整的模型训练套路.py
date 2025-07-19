@@ -56,6 +56,7 @@ for i in range(epoch):
     print(f"---------第 {i + 1} 轮训练开始----------")
 
     # 训练步骤（遍历训练集所有批次）
+    net.train()
     for data in train_DataLoader:
         img, targets = data  # 解包数据批次（图像和标签）
         output = net(img)  # 前向传播得到预测输出
@@ -74,6 +75,7 @@ for i in range(epoch):
             writer.add_scalar('Train_Loss', loss.item(), total_train_step)  # 记录到TensorBoard
 
     # 测试步骤（在整个测试集上评估）
+    net.eval()
     total_test_loss = 0  # 累计测试损失
     with torch.no_grad():  # 禁用梯度计算（节省内存）
         for data in test_DataLoader:
