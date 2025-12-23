@@ -194,11 +194,8 @@ def train_model_process(model, train_dataloader, val_dataloader, num_epochs):
             time_use // 60, time_use % 60))  # 格式化为分钟和秒
         print()
 
-    # 训练结束后，加载在验证集上表现最好的模型权重
-    model.load_state_dict(best_model_wts)
-
     # 保存最佳模型到文件
-    torch.save(model.state_dict(), 'Model_Save/best_model.pth')
+    torch.save(best_model_wts, 'Model_Save/best_model.pth')
 
     # 创建DataFrame记录整个训练过程
     train_process = pd.DataFrame(data={
@@ -258,7 +255,7 @@ if __name__ == '__main__':
     train_dataloader, val_dataloader = train_val_data_process()
 
     # 训练模型，获取训练过程记录
-    train_process = train_model_process(LeNet, train_dataloader, val_dataloader, 100)
+    train_process = train_model_process(LeNet, train_dataloader, val_dataloader, 50)
 
     # 可视化训练过程中的损失和准确率变化
     matplot_acc_loss(train_process)
