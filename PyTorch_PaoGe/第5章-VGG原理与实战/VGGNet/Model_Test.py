@@ -26,7 +26,7 @@ def test_data_process():
         download=True,  # 如果本地不存在数据集，则自动下载
         # 定义图像预处理流程（组合多个变换）
         transform=transforms.Compose([
-            transforms.Resize(size=227),  # 将图像大小调整为227x227像素
+            transforms.Resize(size=224),  # 将图像大小调整为227x227像素
             transforms.ToTensor()  # 将PIL图像或numpy数组转换为PyTorch张量，并自动归一化到[0,1]范围
         ])
     )
