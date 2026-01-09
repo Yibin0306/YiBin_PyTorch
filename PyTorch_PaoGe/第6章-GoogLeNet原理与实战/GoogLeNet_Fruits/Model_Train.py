@@ -14,7 +14,7 @@ from Model import GoogLeNet, Inception  # 从Model模块导入GoogLeNet, Incepti
 def train_val_data_process():
     # 设置训练数据的根目录路径
     # 使用原始字符串(r前缀)避免反斜杠转义问题
-    Root_Train = r"data\train"
+    Root_Train = r"Data\train"
 
     # 定义图像归一化操作
     # 使用数据集的均值和标准差进行标准化，有助于模型训练收敛
@@ -36,7 +36,7 @@ def train_val_data_process():
 
     # 创建训练数据集实例
     # ImageFolder会自动根据目录结构加载数据，要求目录结构为：
-    # data/train/
+    # Data/train/
     #   ├── class1/
     #   │   ├── image1.jpg
     #   │   └── image2.jpg

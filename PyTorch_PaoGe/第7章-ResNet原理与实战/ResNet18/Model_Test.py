@@ -1,45 +1,35 @@
 import torch  # 导入PyTorch深度学习框架
 import torch.utils.data as Data  # 导入PyTorch数据加载和处理模块
 from torchvision import transforms  # 导入图像预处理变换模块
+from torchvision.datasets import FashionMNIST  # 导入FashionMNIST数据集
 from torch import nn  # 导入神经网络模块
-from torchvision.datasets import ImageFolder
-from PIL import Image
-from Model import GoogLeNet, Inception  # 从自定义的Model模块中导入GoogLeNet, Inception模型定义
+from Model import ResNet, ResidualBlock  # 从自定义的Model模块中导入GoogLeNet, Inception模型定义
 
 
 def test_data_process():
-    # 设置训练数据的根目录路径
-    # 使用原始字符串(r前缀)避免反斜杠转义问题
-    Root_Test = r"Data\test"
+    """
+    测试数据处理函数：加载并准备测试数据集
 
-    # 定义图像归一化操作
-    # 使用数据集的均值和标准差进行标准化，有助于模型训练收敛
-    # 这里的均值[0.16207035, 0.15101879, 0.1384724]和标准差[0.05801719, 0.05213359, 0.0477778]通常是预先计算得到的
-    normalize = transforms.Normalize(mean=[0.16207035, 0.15101879, 0.1384724],
-                                     std=[0.05801719, 0.05213359, 0.0477778])
+    功能：
+    1. 下载或加载FashionMNIST测试集
+    2. 对测试图像进行预处理
+    3. 创建测试数据加载器
 
-    # 定义训练数据的图像变换管道（数据预处理流程）
-    test_transform = transforms.Compose([
-        # 1. 调整图像尺寸为224x224像素（符合GoogLeNet等经典CNN网络的输入要求）
-        transforms.Resize((224, 224)),
+    返回：
+    test_dataloader - 测试数据加载器，用于批量加载测试数据
+    """
 
-        # 2. 将PIL图像或numpy数组转换为PyTorch张量，并自动将像素值从[0,255]缩放到[0,1]范围
-        transforms.ToTensor(),
-
-        # 3. 应用标准化处理：对每个通道进行 (input - mean) / std 的归一化
-        normalize
-    ])
-
-    # 创建训练数据集实例
-    # ImageFolder会自动根据目录结构加载数据，要求目录结构为：
-    # Data/train/
-    #   ├── class1/
-    #   │   ├── image1.jpg
-    #   │   └── image2.jpg
-    #   └── class2/
-    #       ├── image1.jpg
-    #       └── image2.jpg
-    test_data = ImageFolder(root=Root_Test, transform=test_transform)
+    # 创建FashionMNIST测试数据集实例
+    test_data = FashionMNIST(
+        root='./Data',  # 数据集存储的根目录
+        train=False,  # 加载测试集（False表示测试集，True表示训练集）
+        download=True,  # 如果本地不存在数据集，则自动下载
+        # 定义图像预处理流程（组合多个变换）
+        transform=transforms.Compose([
+            transforms.Resize(size=224),  # 将图像大小调整为227x227像素
+            transforms.ToTensor()  # 将PIL图像或numpy数组转换为PyTorch张量，并自动归一化到[0,1]范围
+        ])
+    )
 
     # 创建测试数据加载器
     test_dataloader = Data.DataLoader(
@@ -119,7 +109,7 @@ def test_model_process(model, test_dataloader):
 # 主程序入口：当直接运行此脚本时执行以下代码
 if __name__ == '__main__':
     # 创建LeNet模型实例
-    model = GoogLeNet(Inception)
+    model = ResNet(ResidualBlock)
 
     # 加载预训练的最佳模型权重
     # torch.load()：从文件中加载保存的模型状态字典
@@ -127,14 +117,14 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load('Model_Save/best_model.pth'))
 
     # 处理测试数据，获取测试数据加载器
-    # test_dataloader = test_data_process()
+    test_dataloader = test_data_process()
 
     # 使用测试集评估模型性能
-    # test_model_process(model, test_dataloader)
+    test_model_process(model, test_dataloader)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = model.to(device)
-    classes = ['猫', '狗']
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # model = model.to(device)
+    # classes = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
     # with torch.no_grad():
     #     for b_x, b_y in test_dataloader:
     #         b_x = b_x.to(device)
@@ -145,33 +135,3 @@ if __name__ == '__main__':
     #         result = pre_lab.item()
     #         label = b_y.item()
     #         print("预测值：",classes[result],"------","真实值：",classes[label])
-
-    image = Image.open('data_test/5.jpg')
-    normalize = transforms.Normalize(mean=[0.16207035, 0.15101879, 0.1384724],
-                                     std=[0.05801719, 0.05213359, 0.0477778])
-    test_transform = transforms.Compose([
-        # 1. 调整图像尺寸为224x224像素（符合GoogLeNet等经典CNN网络的输入要求）
-        transforms.Resize((224, 224)),
-
-        # 2. 将PIL图像或numpy数组转换为PyTorch张量，并自动将像素值从[0,255]缩放到[0,1]范围
-        transforms.ToTensor(),
-
-        # 3. 应用标准化处理：对每个通道进行 (input - mean) / std 的归一化
-        normalize
-    ])
-    image = test_transform(image)
-
-    # 添加批次维度
-    image = image.unsqueeze(0)
-
-    with torch.no_grad():
-        model.eval()
-        image = image.to(device)
-        output = model(image)
-        # 获取预测结果：选择输出中概率最大的类别作为预测标签
-        # dim=1表示在类别维度（第1维）上取最大值索引
-        pre_lab = torch.argmax(output, dim=1)
-        result = pre_lab.item()
-
-    print("预测值：", classes[result])
-

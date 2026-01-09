@@ -10,7 +10,7 @@ from Model import GoogLeNet, Inception  # 从自定义的Model模块中导入Goo
 def test_data_process():
     # 设置训练数据的根目录路径
     # 使用原始字符串(r前缀)避免反斜杠转义问题
-    Root_Test = r"data\test"
+    Root_Test = r"Data\test"
 
     # 定义图像归一化操作
     # 使用数据集的均值和标准差进行标准化，有助于模型训练收敛
@@ -32,7 +32,7 @@ def test_data_process():
 
     # 创建训练数据集实例
     # ImageFolder会自动根据目录结构加载数据，要求目录结构为：
-    # data/train/
+    # Data/train/
     #   ├── class1/
     #   │   ├── image1.jpg
     #   │   └── image2.jpg
@@ -99,7 +99,7 @@ def test_model_process(model, test_dataloader):
             pre_lab = torch.argmax(output, dim=1)
 
             # 统计预测正确的样本数量
-            # pre_lab == test_data_y.data：比较预测标签和真实标签，返回布尔张量
+            # pre_lab == test_data_y.Data：比较预测标签和真实标签，返回布尔张量
             # torch.sum()：计算True的数量（即预测正确的样本数）
             test_corrects += torch.sum(pre_lab == test_data_y.data)
 

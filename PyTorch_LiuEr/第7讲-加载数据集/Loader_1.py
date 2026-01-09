@@ -18,7 +18,7 @@ class DiabetesDataset(Dataset):
     """
     糖尿病数据集加载器
 
-    继承自torch.utils.data.Dataset，实现以下方法:
+    继承自torch.utils.Data.Dataset，实现以下方法:
     1. __init__: 初始化数据集
     2. __getitem__: 获取单个样本
     3. __len__: 获取数据集大小

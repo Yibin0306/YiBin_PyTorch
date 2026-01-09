@@ -89,7 +89,7 @@ def test_model_process(model, test_dataloader):
             pre_lab = torch.argmax(output, dim=1)
 
             # 统计预测正确的样本数量
-            # pre_lab == test_data_y.data：比较预测标签和真实标签，返回布尔张量
+            # pre_lab == test_data_y.Data：比较预测标签和真实标签，返回布尔张量
             # torch.sum()：计算True的数量（即预测正确的样本数）
             test_corrects += torch.sum(pre_lab == test_data_y.data)
 

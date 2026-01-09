@@ -3,47 +3,28 @@ import time  # 时间模块，用于计时和测量训练时间
 import pandas as pd  # 数据处理库，用于创建DataFrame和数据分析
 import torch  # PyTorch深度学习框架
 from torch.utils.data import DataLoader  # 数据加载器，用于批量加载数据
-from torchvision.datasets import ImageFolder
+from torchvision.datasets import FashionMNIST  # FashionMNIST数据集
 from torchvision import transforms  # 图像预处理变换
 import torch.utils.data as Data  # PyTorch数据工具
 import numpy as np  # 数值计算库
 import matplotlib.pyplot as plt  # 绘图库
-from Model import GoogLeNet, Inception  # 从Model模块导入GoogLeNet, Inception模型定义
+from Model import ResNet, ResidualBlock  # 从Model模块导入ResNet, ResidualBlock模型定义
 
 
 def train_val_data_process():
-    # 设置训练数据的根目录路径
-    # 使用原始字符串(r前缀)避免反斜杠转义问题
-    Root_Train = r"Data\train"
-
-    # 定义图像归一化操作
-    # 使用数据集的均值和标准差进行标准化，有助于模型训练收敛
-    # 这里的均值[0.16207035, 0.15101879, 0.1384724]和标准差[0.05801719, 0.05213359, 0.0477778]通常是预先计算得到的
-    normalize = transforms.Normalize(mean=[0.16207035, 0.15101879, 0.1384724],
-                                     std=[0.05801719, 0.05213359, 0.0477778])
-
-    # 定义训练数据的图像变换管道（数据预处理流程）
-    train_transform = transforms.Compose([
-        # 1. 调整图像尺寸为224x224像素（符合GoogLeNet等经典CNN网络的输入要求）
-        transforms.Resize((224, 224)),
-
-        # 2. 将PIL图像或numpy数组转换为PyTorch张量，并自动将像素值从[0,255]缩放到[0,1]范围
-        transforms.ToTensor(),
-
-        # 3. 应用标准化处理：对每个通道进行 (input - mean) / std 的归一化
-        normalize
-    ])
-
-    # 创建训练数据集实例
-    # ImageFolder会自动根据目录结构加载数据，要求目录结构为：
-    # Data/train/
-    #   ├── class1/
-    #   │   ├── image1.jpg
-    #   │   └── image2.jpg
-    #   └── class2/
-    #       ├── image1.jpg
-    #       └── image2.jpg
-    dataset = ImageFolder(root=Root_Train, transform=train_transform)
+    """
+    数据处理函数：加载FashionMNIST数据集并划分为训练集和验证集
+    返回: train_dataloader, val_dataloader - 训练和验证数据加载器
+    """
+    # 加载FashionMNIST训练数据集
+    dataset = FashionMNIST(root='./Data',  # 数据集保存路径
+                           train=True,  # 加载训练集（True=训练集，False=测试集）
+                           download=True,  # 如果本地不存在则自动下载数据集
+                           # 定义图像预处理流程
+                           transform=transforms.Compose([
+                               transforms.Resize(size=224),  # 将图像大小调整为224x224（原始FashionMNIST是28x28）
+                               transforms.ToTensor()  # 将PIL图像或numpy数组转换为张量，并归一化到[0,1]
+                           ]))
 
     # 将数据集划分为训练集和验证集（80%训练，20%验证）
     # random_split函数随机划分数据集，返回两个子集
@@ -53,13 +34,13 @@ def train_val_data_process():
 
     # 创建训练数据加载器
     train_dataloader = DataLoader(dataset=train_data,
-                                  batch_size=32,  # 每个批次的样本数量
+                                  batch_size=64,  # 每个批次的样本数量
                                   shuffle=True,  # 每个epoch打乱数据顺序，防止模型记忆顺序
                                   num_workers=0)
 
     # 创建验证数据加载器
     val_dataloader = DataLoader(dataset=val_data,
-                                batch_size=32,  # 验证批次大小与训练一致
+                                batch_size=64,  # 验证批次大小与训练一致
                                 shuffle=True,  # 验证集也可以打乱，但不是必须的
                                 num_workers=0)
 
@@ -268,13 +249,13 @@ if __name__ == '__main__':
     当直接运行此脚本时执行完整的训练流程
     """
     # 创建LeNet模型实例
-    GoogLeNet = GoogLeNet(Inception)
+    ResNet = ResNet(ResidualBlock)
 
     # 处理数据，获取训练和验证数据加载器
     train_dataloader, val_dataloader = train_val_data_process()
 
     # 训练模型，获取训练过程记录
-    train_process = train_model_process(GoogLeNet, train_dataloader, val_dataloader, 5)
+    train_process = train_model_process(ResNet, train_dataloader, val_dataloader, 20)
 
     # 可视化训练过程中的损失和准确率变化
     matplot_acc_loss(train_process)
